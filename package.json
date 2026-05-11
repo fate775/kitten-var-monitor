@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/fate775/kitten-var-monitor#readme",
   "dependencies": {
-    "kitten-cloud-function": "^1.2.1"
+    "kitten-cloud-function": "^1.2.1",
+    "ws": "^8.20.0"
   }
 }
