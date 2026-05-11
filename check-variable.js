@@ -1,24 +1,24 @@
-const WebSocket = require('ws');                // 引入 ws
-globalThis.WebSocket = WebSocket;               // 挂载到全局
-
 const { KittenCloudFunction } = require('kitten-cloud-function');
 
-const WORK_ID = process.env.WORK_ID;
-const VAR_NAME = process.env.VAR_NAME || '测试';
-const TRIGGER_TEXT = '你好呀';
-const NEW_TEXT = '你好';
-
 async function main() {
-  const cloudFunc = new KittenCloudFunction();
-  await cloudFunc.connect(WORK_ID);
+  const workId = process.env.WORK_ID;
+  const varName = process.env.VAR_NAME || '测试';
 
-  const currentValue = await cloudFunc.getCloudVariable(VAR_NAME);
-  console.log(`当前 "${VAR_NAME}" 的值: "${currentValue}"`);
+  // 1. 创建连接（直接传入作品ID，不需要 connect）
+  const cloud = new KittenCloudFunction(workId);
 
-  if (currentValue === TRIGGER_TEXT) {
+  // 2. 获取公有云变量实例
+  const variable = await cloud.publicVariable.get(varName);
+
+  // 3. 读取当前值
+  const currentValue = variable.get();
+  console.log(`当前 "${varName}" 的值: "${currentValue}"`);
+
+  // 4. 判断并修改
+  if (currentValue === '你好呀') {
     console.log('检测到触发文字，正在修改...');
-    await cloudFunc.setCloudVariable(VAR_NAME, NEW_TEXT);
-    console.log(`修改成功：${TRIGGER_TEXT} → ${NEW_TEXT}`);
+    await variable.set('你好');
+    console.log('修改成功：你好呀 → 你好');
   } else {
     console.log('未触发，不执行操作');
   }
