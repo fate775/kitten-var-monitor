@@ -1,0 +1,28 @@
+name: Kitten Cloud Variable Monitor
+
+on:
+  schedule:
+    # 每5分钟执行一次 (UTC时间)
+    - cron: '*/5 * * * *'
+  workflow_dispatch:  # 允许手动触发，方便测试
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: 安装依赖
+        run: npm ci
+
+      - name: 运行监控脚本
+        run: node check-variable.js
+        env:
+          WORK_ID: ${{ secrets.WORK_ID }}
+          TOKEN: ${{ secrets.TOKEN }}
